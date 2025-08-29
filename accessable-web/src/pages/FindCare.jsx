@@ -41,10 +41,9 @@ import {
   MultiSelect,
   Box,
 } from "@mantine/core";
-
+import { useMediaQuery } from '@mantine/hooks';
 import { useAuth } from '../context/AuthContext';
 import { buildApiUrl } from '../config/api.js';
-
 
 export default function FindCare() {
   const [caregivers, setCaregivers] = useState([]);
@@ -63,6 +62,7 @@ export default function FindCare() {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTraits, setSelectedTraits] = useState([]);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const theme = useMantineTheme();
   const navigate = useNavigate();
@@ -91,7 +91,6 @@ export default function FindCare() {
     try {
       const response = await fetch(buildApiUrl('caregivers/suggest'), {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -288,8 +287,10 @@ export default function FindCare() {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        paddingTop: "2rem",
+        paddingTop: isMobile ? "calc(4rem + 2vw)" : "calc(6rem + 2vw)", // Increased and responsive padding
         paddingBottom: "4rem",
+        position: "relative",
+        zIndex: 10, // Ensure content is below header but above background
       }}
     >
       <Container size="lg">
@@ -531,289 +532,277 @@ export default function FindCare() {
           </Paper>
         )}
 
-       {!loading && caregivers.length > 0 && (
-  <Grid gutter="xl">
-    {caregivers
-      .filter((c) => {
-        const q = searchQuery.trim().toLowerCase();
-        const matchesQuery =
-          q === "" ||
-          (c.username || "").toLowerCase().includes(q) ||
-          (c.address || "").toLowerCase().includes(q);
-        const matchesTraits =
-          selectedTraits.length === 0 ||
-          selectedTraits.every((t) =>
-            (Array.isArray(c.traits) ? c.traits : []).some(
-              (ct) =>
-                (ct || "").trim().toLowerCase() ===
-                (t || "").trim().toLowerCase()
-            )
-          );
-        return matchesQuery && matchesTraits;
-      })
-      .map((caregiver, index) => (
-        <Grid.Col
-          key={`${
-            caregiver.id ||
-            caregiver.email ||
-            caregiver.username ||
-            index
-          }`}
-          span={{ base: 12, md: 6, lg: 4 }}
-          style={{ display: "flex" }} // 👈 flex column
-        >
-          <Card
-            shadow="xl"
-            padding="xl"
-            radius="xl"
-            withBorder={false}
-            style={{
-              background: "rgba(255, 255, 255, 0.95)",
-              backdropFilter: "blur(10px)",
-              transition: "all 0.3s ease",
-              cursor: "pointer",
-              minHeight: "100%", // 👈 stretch to col height
-              flex: 1, // 👈 fill space
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow =
-                "0 20px 40px rgba(0,0,0,0.1)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow =
-                "0 10px 30px rgba(0,0,0,0.1)";
-            }}
-          >
-            {/* Header with Avatar and Match Score */}
-            <Group justify="space-between" mb="lg" align="flex-start">
-              <Group gap="md" align="center">
-                <div
-                  style={{
-                    display: "inline-flex",
-                    padding: "3px", // thickness of border
-                    borderRadius: "50%", // makes it round
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  }}
+        {!loading && caregivers.length > 0 && (
+          <Grid gutter="xl">
+            {caregivers
+              .filter((c) => {
+                const q = searchQuery.trim().toLowerCase();
+                const matchesQuery =
+                  q === "" ||
+                  (c.username || "").toLowerCase().includes(q) ||
+                  (c.address || "").toLowerCase().includes(q);
+                const matchesTraits =
+                  selectedTraits.length === 0 ||
+                  selectedTraits.every((t) =>
+                    (Array.isArray(c.traits) ? c.traits : []).some(
+                      (ct) =>
+                        (ct || "").trim().toLowerCase() ===
+                        (t || "").trim().toLowerCase()
+                    )
+                  );
+                return matchesQuery && matchesTraits;
+              })
+              .map((caregiver, index) => (
+                <Grid.Col
+                  key={`${
+                    caregiver.id ||
+                    caregiver.email ||
+                    caregiver.username ||
+                    index
+                  }`}
+                  span={{ base: 12, md: 6, lg: 4 }}
+                  style={{ display: "flex" }}
                 >
-                  <Avatar
-                    src={caregiver.profilePicture}
-                    size="xl"
+                  <Card
+                    shadow="xl"
+                    padding="xl"
                     radius="xl"
+                    withBorder={false}
                     style={{
-                      borderRadius: "50%", // ensure inner stays round
-                      backgroundColor: "white", // fallback if no image
+                      background: "rgba(255, 255, 255, 0.95)",
+                      backdropFilter: "blur(10px)",
+                      transition: "all 0.3s ease",
+                      cursor: "pointer",
+                      minHeight: "100%",
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-4px)";
+                      e.currentTarget.style.boxShadow =
+                        "0 20px 40px rgba(0,0,0,0.1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.boxShadow =
+                        "0 10px 30px rgba(0,0,0,0.1)";
                     }}
                   >
-                    {caregiver.username.charAt(0).toUpperCase()}
-                  </Avatar>
-                </div>
+                    {/* Header with Avatar and Match Score */}
+                    <Group justify="space-between" mb="lg" align="flex-start">
+                      <Group gap="md" align="center">
+                        <div
+                          style={{
+                            display: "inline-flex",
+                            padding: "3px",
+                            borderRadius: "50%",
+                            background:
+                              "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                          }}
+                        >
+                          <Avatar
+                            src={caregiver.profilePicture}
+                            size="xl"
+                            radius="xl"
+                            style={{
+                              borderRadius: "50%",
+                              backgroundColor: "white",
+                            }}
+                          >
+                            {caregiver.username.charAt(0).toUpperCase()}
+                          </Avatar>
+                        </div>
 
-                <Stack gap="xs">
-                  <Text fw={600} size="lg">
-                    {caregiver.username}
-                  </Text>
-                  <Badge variant="light" color="violet" radius="xl">
-                    Professional Caregiver
-                  </Badge>
-                </Stack>
-              </Group>
-              <Badge
-                color={getMatchColor(caregiver.matchPercentage)}
-                variant="gradient"
-                gradient={{
-                  from: getMatchColor(caregiver.matchPercentage),
-                  to: "blue",
-                }}
-                size="lg"
-                radius="xl"
-              >
-                {caregiver.matchPercentage}% Match
-              </Badge>
-            </Group>
+                        <Stack gap="xs">
+                          <Text fw={600} size="lg">
+                            {caregiver.username}
+                          </Text>
+                          <Badge variant="light" color="violet" radius="xl">
+                            Professional Caregiver
+                          </Badge>
+                        </Stack>
+                      </Group>
+                      <Badge
+                        color={getMatchColor(caregiver.matchPercentage)}
+                        variant="gradient"
+                        gradient={{
+                          from: getMatchColor(caregiver.matchPercentage),
+                          to: "blue",
+                        }}
+                        size="lg"
+                        radius="xl"
+                      >
+                        {caregiver.matchPercentage}% Match
+                      </Badge>
+                    </Group>
 
-            {/* Match Details */}
-            <Paper
-              p="md"
-              radius="xl"
-              mb="lg"
-              style={{
-                background: `linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)`,
-                border: "1px solid rgba(102, 126, 234, 0.2)",
-              }}
-            >
-              <Group justify="space-between" align="center">
-                <Stack gap="xs">
-                  <Text size="sm" fw={600} c="violet">
-                    {getMatchLabel(caregiver.matchPercentage)}
-                  </Text>
-                  <Text size="xs" c="dimmed">
-                    Matches {caregiver.matchScore} of{" "}
-                    {requiredTraits.length} required skills
-                  </Text>
-                </Stack>
-                <ThemeIcon
-                  variant="light"
-                  color="violet"
-                  size="lg"
-                  radius="xl"
-                >
-                  <IconStar size={18} />
-                </ThemeIcon>
-              </Group>
-            </Paper>
-
-            {/* Matching Traits */}
-            {caregiver.matchingTraits.length > 0 && (
-              <Stack gap="sm" mb="lg">
-                <Text size="sm" fw={600} c="teal">
-                  ✓ Matching Skills
-                </Text>
-                <Group gap="xs">
-                  {caregiver.matchingTraits.map((trait, idx) => (
-                    <Badge
-                      key={idx}
-                      size="sm"
-                      variant="gradient"
-                      gradient={{ from: "teal", to: "blue" }}
+                    {/* Match Details */}
+                    <Paper
+                      p="md"
                       radius="xl"
+                      mb="lg"
+                      style={{
+                        background: `linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)`,
+                        border: "1px solid rgba(102, 126, 234, 0.2)",
+                      }}
                     >
-                      {trait}
-                    </Badge>
-                  ))}
-                </Group>
-              </Stack>
-            )}
+                      <Group justify="space-between" align="center">
+                        <Stack gap="xs">
+                          <Text size="sm" fw={600} c="violet">
+                            {getMatchLabel(caregiver.matchPercentage)}
+                          </Text>
+                          <Text size="xs" c="dimmed">
+                            Matches {caregiver.matchScore} of{" "}
+                            {requiredTraits.length} required skills
+                          </Text>
+                        </Stack>
+                        <ThemeIcon
+                          variant="light"
+                          color="violet"
+                          size="lg"
+                          radius="xl"
+                        >
+                          <IconStar size={18} />
+                        </ThemeIcon>
+                      </Group>
+                    </Paper>
 
-            {/* Contact Information */}
-            <Stack gap="sm" mb="lg">
-              {caregiver.phoneNumber && (
-                <Group gap="sm" align="center">
-                  <ThemeIcon
-                    size="sm"
-                    variant="light"
-                    color="blue"
-                    radius="xl"
-                  >
-                    <IconPhone size={12} />
-                  </ThemeIcon>
-                  <Text size="sm" fw={500}>
-                    {caregiver.phoneNumber}
-                  </Text>
-                </Group>
-              )}
-              {caregiver.address && (
-                <Group gap="sm" align="center">
-                  <ThemeIcon
-                    size="sm"
-                    variant="light"
-                    color="violet"
-                    radius="xl"
-                  >
-                    <IconMapPin size={12} />
-                  </ThemeIcon>
-                  <Text size="sm" fw={500} lineClamp={1}>
-                    {caregiver.address}
-                  </Text>
-                </Group>
-              )}
-            </Stack>
+                    {/* Matching Traits */}
+                    {caregiver.matchingTraits.length > 0 && (
+                      <Stack gap="sm" mb="lg">
+                        <Text size="sm" fw={600} c="teal">
+                          ✓ Matching Skills
+                        </Text>
+                        <Group gap="xs">
+                          {caregiver.matchingTraits.map((trait, idx) => (
+                            <Badge
+                              key={idx}
+                              size="sm"
+                              variant="gradient"
+                              gradient={{ from: "teal", to: "blue" }}
+                              radius="xl"
+                            >
+                              {trait}
+                            </Badge>
+                          ))}
+                        </Group>
+                      </Stack>
+                    )}
 
-            {/* All Skills */}
-            <Stack gap="sm" mb="xl">
-              <Text size="sm" fw={600} c="gray.7">
-                All Skills & Expertise
-              </Text>
-              <Group gap="xs">
-                {(() => {
-                  const raw =
-                    Array.isArray(caregiver.traits) &&
-                    caregiver.traits.length > 0
-                      ? caregiver.traits
-                      : Array.isArray(caregiver.skills) &&
-                        caregiver.skills.length > 0
-                      ? caregiver.skills
-                      : Array.isArray(caregiver.caregiverTraits) &&
-                        caregiver.caregiverTraits.length > 0
-                      ? caregiver.caregiverTraits
-                      : [];
-                  const skills = raw
-                    .map((t) => (typeof t === "string" ? t.trim() : ""))
-                    .filter((t) => t !== "");
-                  if (skills.length === 0) {
-                    return (
-                      <Text size="xs" c="dimmed" fs="italic">
-                        No skills listed
+                    {/* Contact Information */}
+                    <Stack gap="sm" mb="lg">
+                      {caregiver.phoneNumber && (
+                        <Group gap="sm" align="center">
+                          <ThemeIcon
+                            size="sm"
+                            variant="light"
+                            color="blue"
+                            radius="xl"
+                          >
+                            <IconPhone size={12} />
+                          </ThemeIcon>
+                          <Text size="sm" fw={500}>
+                            {caregiver.phoneNumber}
+                          </Text>
+                        </Group>
+                      )}
+                      {caregiver.address && (
+                        <Group gap="sm" align="center">
+                          <ThemeIcon
+                            size="sm"
+                            variant="light"
+                            color="violet"
+                            radius="xl"
+                          >
+                            <IconMapPin size={12} />
+                          </ThemeIcon>
+                          <Text size="sm" fw={500} lineClamp={1}>
+                            {caregiver.address}
+                          </Text>
+                        </Group>
+                      )}
+                    </Stack>
+
+                    {/* All Skills */}
+                    <Stack gap="sm" mb="xl">
+                      <Text size="sm" fw={600} c="gray.7">
+                        All Skills & Expertise
                       </Text>
-                    );
-                  }
-                  return skills.map((trait, idx) => (
-                    <Badge
-                      key={`${trait}-${idx}`}
-                      size="sm"
-                      variant={
-                        Array.isArray(caregiver.matchingTraits) &&
-                        caregiver.matchingTraits.includes(trait)
-                          ? "gradient"
-                          : "light"
-                      }
-                      gradient={
-                        Array.isArray(caregiver.matchingTraits) &&
-                        caregiver.matchingTraits.includes(trait)
-                          ? { from: "teal", to: "blue" }
-                          : undefined
-                      }
-                      color={
-                        Array.isArray(caregiver.matchingTraits) &&
-                        caregiver.matchingTraits.includes(trait)
-                          ? undefined
-                          : "gray"
-                      }
-                      radius="xl"
-                    >
-                      {trait}
-                    </Badge>
-                  ));
-                })()}
-              </Group>
-            </Stack>
+                      <Group gap="xs">
+                        {(() => {
+                          const raw =
+                            Array.isArray(caregiver.traits) &&
+                            caregiver.traits.length > 0
+                              ? caregiver.traits
+                              : Array.isArray(caregiver.skills) &&
+                                caregiver.skills.length > 0
+                              ? caregiver.skills
+                              : Array.isArray(caregiver.caregiverTraits) &&
+                                caregiver.caregiverTraits.length > 0
+                              ? caregiver.caregiverTraits
+                              : [];
+                          const skills = raw
+                            .map((t) => (typeof t === "string" ? t.trim() : ""))
+                            .filter((t) => t !== "");
+                          if (skills.length === 0) {
+                            return (
+                              <Text size="xs" c="dimmed" fs="italic">
+                                No skills listed
+                              </Text>
+                            );
+                          }
+                          return skills.map((trait, idx) => (
+                            <Badge
+                              key={`${trait}-${idx}`}
+                              size="sm"
+                              variant={
+                                Array.isArray(caregiver.matchingTraits) &&
+                                caregiver.matchingTraits.includes(trait)
+                                  ? "gradient"
+                                  : "light"
+                              }
+                              gradient={
+                                Array.isArray(caregiver.matchingTraits) &&
+                                caregiver.matchingTraits.includes(trait)
+                                  ? { from: "teal", to: "blue" }
+                                  : undefined
+                              }
+                              color={
+                                Array.isArray(caregiver.matchingTraits) &&
+                                caregiver.matchingTraits.includes(trait)
+                                  ? undefined
+                                  : "gray"
+                              }
+                              radius="xl"
+                            >
+                              {trait}
+                            </Badge>
+                          ));
+                        })()}
+                      </Group>
+                    </Stack>
 
-            {/* Action Buttons (stick to bottom) */}
-            <Group gap="sm" mt="auto">
-              <Button
-                flex={1}
-                leftSection={<IconMail size={16} />}
-                onClick={() => handleContactCaregiver(caregiver)}
-                variant="gradient"
-                gradient={{ from: "violet", to: "blue" }}
-                radius="xl"
-                size="md"
-              >
-                Contact Now
-              </Button>
-              {/* <Tooltip label="Save to favorites" position="top">
-                <ActionIcon
-                  variant="light"
-                  color="red"
-                  size="lg"
-                  radius="xl"
-                  style={{ transition: "all 0.2s ease" }}
-                >
-                  <IconHeart size={18} />
-                </ActionIcon>
-              </Tooltip> */}
-            </Group>
-          </Card>
-        </Grid.Col>
-      ))}
-  </Grid>
-)}
-
+                    {/* Action Buttons (stick to bottom) */}
+                    <Group gap="sm" mt="auto">
+                      <Button
+                        flex={1}
+                        leftSection={<IconMail size={16} />}
+                        onClick={() => handleContactCaregiver(caregiver)}
+                        variant="gradient"
+                        gradient={{ from: "violet", to: "blue" }}
+                        radius="xl"
+                        size="md"
+                      >
+                        Contact Now
+                      </Button>
+                    </Group>
+                  </Card>
+                </Grid.Col>
+              ))}
+          </Grid>
+        )}
 
         {/* No Results */}
         {!loading && caregivers.length === 0 && !error && (
@@ -878,6 +867,7 @@ export default function FindCare() {
           size="md"
           radius="xl"
           overlayProps={{ blur: 10 }}
+          zIndex={1200} // Ensure modal is above header and dropdown
         >
           <Stack gap="lg">
             <Text size="sm" c="dimmed">
