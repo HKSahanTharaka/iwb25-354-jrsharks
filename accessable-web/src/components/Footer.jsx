@@ -26,33 +26,40 @@ function Footer() {
   const FooterLink = ({ icon, label, path, color = "blue" }) => (
     <Group 
       gap="xs" 
-      className="cursor-pointer group transition-all duration-200 ease-out hover:-translate-y-0.5"
+      style={{
+        cursor: 'pointer',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        padding: '8px 12px',
+        borderRadius: '12px',
+        backgroundColor: location.pathname === path ? 'rgba(139, 69, 195, 0.15)' : 'transparent'
+      }}
       onClick={() => navigate(path)}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = 'rgba(139, 69, 195, 0.2)';
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 69, 195, 0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = location.pathname === path ? 'rgba(139, 69, 195, 0.15)' : 'transparent';
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = 'none';
+      }}
     >
-      <Box className={`transition-colors duration-200 ${
-        color === 'blue' ? 'group-hover:text-blue-500' :
-        color === 'emerald' ? 'group-hover:text-emerald-500' :
-        color === 'amber' ? 'group-hover:text-amber-500' :
-        'group-hover:text-purple-500'
-      }`}>
+      <Box 
+        style={{
+          color: location.pathname === path ? '#8b45c3' : '#64748b',
+          transition: 'all 0.3s ease'
+        }}
+      >
         {icon}
       </Box>
       <Text 
         size="sm" 
-        className={`
-          transition-all duration-200 font-medium
-          ${color === 'blue' ? 'group-hover:text-blue-600' :
-            color === 'emerald' ? 'group-hover:text-emerald-600' :
-            color === 'amber' ? 'group-hover:text-amber-600' :
-            'group-hover:text-purple-600'
-          }
-          ${location.pathname === path ? 
-            (color === 'blue' ? 'text-blue-600' :
-             color === 'emerald' ? 'text-emerald-600' :
-             color === 'amber' ? 'text-amber-600' :
-             'text-purple-600') : 'text-slate-600'
-          }
-        `}
+        style={{
+          fontWeight: location.pathname === path ? 600 : 500,
+          color: location.pathname === path ? '#8b45c3' : '#64748b',
+          transition: 'all 0.3s ease'
+        }}
       >
         {label}
       </Text>
@@ -61,14 +68,15 @@ function Footer() {
 
   return (
     <Paper 
-      shadow="xl" 
-      withBorder 
+      shadow="lg" 
+      withBorder={false}
       mt="xl"
-      className="
-        bg-gradient-to-br from-slate-50 to-slate-100/50
-        border-slate-200/60
-        backdrop-blur-sm
-      "
+      style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(20px)',
+        borderTop: '2px solid rgba(139, 69, 195, 0.2)',
+        boxShadow: '0 -4px 20px rgba(139, 69, 195, 0.1)'
+      }}
     >
       <Container size="xl" py={isMobile ? "lg" : "xl"}>
         {isMobile ? (
@@ -78,68 +86,108 @@ function Footer() {
             <Group gap="xs" align="center">
               <IconAccessible 
                 size={28} 
-                className="text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text"
                 style={{
-                  background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
+                  color: '#8b45c3'
                 }}
               />
               <Text 
                 size="lg" 
                 fw={800} 
-                className="
-                  bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent
-                "
+                style={{
+                  color: '#8b45c3',
+                  letterSpacing: '0.5px'
+                }}
               >
                 AccessAble
               </Text>
             </Group>
 
-            <Text size="sm" ta="center" c="dimmed" maw={300}>
+            <Text 
+              size="sm" 
+              ta="center" 
+              c="dimmed" 
+              maw={300}
+              style={{
+                lineHeight: 1.6,
+                color: '#64748b'
+              }}
+            >
               Making Sri Lanka accessible for everyone. Discover and share accessible places with our community.
             </Text>
 
             {/* Navigation Links */}
-            <Group gap="xl" justify="center" wrap="wrap">
+            <Group gap="md" justify="center" wrap="wrap">
               <FooterLink 
                 icon={<IconHome size={18} />}
                 label="Home"
                 path="/"
-                color="blue"
               />
               <FooterLink 
                 icon={<IconMapPin size={18} />}
                 label="Explore"
                 path="/show-places"
-                color="amber"
               />
               <FooterLink 
                 icon={<IconPlus size={18} />}
                 label="Add Place"
                 path="/add-place"
-                color="emerald"
               />
               <FooterLink 
                 icon={<IconUser size={18} />}
                 label="Profile"
                 path="/profile"
-                color="purple"
               />
             </Group>
 
-            <Divider w="100%" color="slate.2" />
+            <Divider 
+              w="100%" 
+              style={{
+                borderColor: 'rgba(139, 69, 195, 0.15)'
+              }}
+            />
 
             {/* Copyright */}
             <Group gap="xs" align="center">
-              <Text size="xs" c="dimmed">
+              <Text 
+                size="xs" 
+                style={{
+                  color: '#64748b'
+                }}
+              >
                 © {new Date().getFullYear()} AccessAble Sri Lanka
               </Text>
-              <Text size="xs" c="dimmed">•</Text>
+              <Text 
+                size="xs" 
+                style={{
+                  color: '#94a3b8'
+                }}
+              >
+                •
+              </Text>
               <Group gap={4} align="center">
-                <Text size="xs" c="dimmed">Made with</Text>
-                <IconHeart size={12} className="text-red-400" />
-                <Text size="xs" c="dimmed">for accessibility</Text>
+                <Text 
+                  size="xs" 
+                  style={{
+                    color: '#64748b'
+                  }}
+                >
+                  Made with
+                </Text>
+                <IconHeart 
+                  size={12} 
+                  style={{
+                    color: '#ef4444',
+                    animation: 'pulse 2s infinite'
+                  }}
+                />
+                <Text 
+                  size="xs" 
+                  style={{
+                    color: '#64748b'
+                  }}
+                >
+                  for accessibility
+                </Text>
               </Group>
             </Group>
           </Stack>
@@ -153,27 +201,42 @@ function Footer() {
                 <Group gap="xs" align="center">
                   <IconAccessible 
                     size={32} 
-                    className="text-blue-600"
+                    style={{
+                      color: '#8b45c3'
+                    }}
                   />
                   <Text 
                     size="xl" 
                     fw={800} 
-                    className="
-                      bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent
-                    "
+                    style={{
+                      color: '#8b45c3',
+                      letterSpacing: '0.5px'
+                    }}
                   >
                     AccessAble Sri Lanka
                   </Text>
                 </Group>
-                <Text size="sm" c="dimmed" lh={1.6}>
+                <Text 
+                  size="sm" 
+                  style={{
+                    color: '#64748b',
+                    lineHeight: 1.6
+                  }}
+                >
                   Empowering accessibility across Sri Lanka. Discover wheelchair-friendly places, 
                   share your experiences, and help build a more inclusive community for everyone.
                 </Text>
               </Stack>
 
               {/* Quick Links */}
-              <Stack gap="lg">
-                <Text size="sm" fw={600} className="text-slate-700">
+              <Stack gap="lg" style={{ minWidth: '200px' }}>
+                <Text 
+                  size="sm" 
+                  fw={600} 
+                  style={{
+                    color: '#374151'
+                  }}
+                >
                   Quick Navigation
                 </Text>
                 <Stack gap="sm">
@@ -181,47 +244,83 @@ function Footer() {
                     icon={<IconHome size={18} />}
                     label="Home"
                     path="/"
-                    color="blue"
                   />
                   <FooterLink 
                     icon={<IconMapPin size={18} />}
                     label="Explore Places"
                     path="/show-places"
-                    color="amber"
                   />
                   <FooterLink 
                     icon={<IconPlus size={18} />}
                     label="Add New Place"
                     path="/add-place"
-                    color="emerald"
                   />
                   <FooterLink 
                     icon={<IconUser size={18} />}
                     label="My Profile"
                     path="/profile"
-                    color="purple"
                   />
                 </Stack>
               </Stack>
             </Group>
 
-            <Divider color="slate.2" />
+            <Divider 
+              style={{
+                borderColor: 'rgba(139, 69, 195, 0.15)'
+              }}
+            />
 
             {/* Bottom Section */}
             <Group justify="space-between" align="center">
-              <Text size="sm" c="dimmed">
+              <Text 
+                size="sm" 
+                style={{
+                  color: '#64748b'
+                }}
+              >
                 © {new Date().getFullYear()} AccessAble Sri Lanka. Building bridges to accessibility.
               </Text>
               
               <Group gap="xs" align="center">
-                <Text size="sm" c="dimmed">Made with</Text>
-                <IconHeart size={16} className="text-red-400 animate-pulse" />
-                <Text size="sm" c="dimmed">for a more accessible world</Text>
+                <Text 
+                  size="sm" 
+                  style={{
+                    color: '#64748b'
+                  }}
+                >
+                  Made with
+                </Text>
+                <IconHeart 
+                  size={16} 
+                  style={{
+                    color: '#ef4444',
+                    animation: 'pulse 2s infinite'
+                  }}
+                />
+                <Text 
+                  size="sm" 
+                  style={{
+                    color: '#64748b'
+                  }}
+                >
+                  for a more accessible world
+                </Text>
               </Group>
             </Group>
           </Stack>
         )}
       </Container>
+
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
+        }
+      `}</style>
     </Paper>
   );
 }
