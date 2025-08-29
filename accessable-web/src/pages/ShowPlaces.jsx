@@ -383,7 +383,7 @@ function ShowPlaces() {
       <MinimalBackgroundIllustration />
 
       {/* Hero Section */}
-      <Box pt={60} pb={40}>
+      <Box pt={120} pb={40}>
         <Container size="lg">
           <Center mb={40}>
             <Stack align="center" spacing="lg">

@@ -1,6 +1,5 @@
 "use client";
 
-// src/pages/UserProfile.jsx
 import { useState, useEffect } from "react";
 import {
   Container,
@@ -26,6 +25,7 @@ import {
   PasswordInput,
   Alert,
 } from "@mantine/core";
+import { useMediaQuery } from '@mantine/hooks';
 import {
   IconUser,
   IconPhone,
@@ -51,6 +51,7 @@ import { notifications } from "@mantine/notifications";
 function UserProfile() {
   const { user, token, loading: authLoading, logout, setUser } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const [profile, setProfile] = useState(null);
   const [activity, setActivity] = useState(null);
@@ -463,6 +464,9 @@ function UserProfile() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          paddingTop: isMobile ? "calc(4rem + 2vw)" : "calc(6rem + 2vw)", // Adjusted to push content below header
+          position: "relative",
+          zIndex: 10, // Ensure content is below header but above background
         }}
       >
         <Container size="sm">
@@ -513,6 +517,9 @@ function UserProfile() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          paddingTop: isMobile ? "calc(4rem + 2vw)" : "calc(6rem + 2vw)", // Adjusted to push content below header
+          position: "relative",
+          zIndex: 10, // Ensure content is below header but above background
         }}
       >
         <Container size="sm">
@@ -572,8 +579,10 @@ function UserProfile() {
         minHeight: "100vh",
         background:
           "linear-gradient(to bottom, #667eea 0%, #764ba2 50%, #f3f0ff 50%, #f3f0ff 100%)",
-        paddingTop: "2rem",
+        paddingTop: isMobile ? "calc(4rem + 2vw)" : "calc(6rem + 2vw)", // Adjusted to push content below header
         paddingBottom: "2rem",
+        position: "relative",
+        zIndex: 10, // Ensure content is below header but above background
       }}
     >
       <Container size="md">
@@ -1350,6 +1359,7 @@ function UserProfile() {
           backgroundOpacity: 0.55,
           blur: 3,
         }}
+        zIndex={1200} // Ensure modal is above header and dropdown
         styles={{
           content: {
             borderRadius: "1rem",
@@ -1533,6 +1543,7 @@ function UserProfile() {
           backgroundOpacity: 0.55,
           blur: 3,
         }}
+        zIndex={1200} // Ensure modal is above header and dropdown
         styles={{
           content: {
             borderRadius: "1rem",
