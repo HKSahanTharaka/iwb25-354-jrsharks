@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -25,6 +27,7 @@ import {
   MultiSelect,
   Box,
 } from "@mantine/core";
+import { useMediaQuery } from '@mantine/hooks';
 import {
   IconSearch,
   IconUser,
@@ -59,6 +62,7 @@ export default function FindDisabled() {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDisabilities, setSelectedDisabilities] = useState([]);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const theme = useMantineTheme();
   const navigate = useNavigate();
@@ -243,8 +247,10 @@ export default function FindDisabled() {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        paddingTop: "2rem",
+        paddingTop: isMobile ? "calc(4rem + 2vw)" : "calc(6rem + 2vw)", // Adjusted to push content below header
         paddingBottom: "4rem",
+        position: "relative",
+        zIndex: 10, // Ensure content is below header but above background
       }}
     >
       <Container size="lg">
@@ -722,6 +728,7 @@ export default function FindDisabled() {
           size="md"
           radius="xl"
           overlayProps={{ blur: 10 }}
+          zIndex={1200} // Ensure modal is above header and dropdown
         >
           <Stack gap="lg">
             <Text size="sm" c="dimmed">

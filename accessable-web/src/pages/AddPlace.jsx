@@ -363,7 +363,7 @@ function AddPlace() {
           }}
         />
 
-        <div className="container mx-auto px-6 text-center relative z-10">
+        <div className="container mx-auto px-6 py-16 text-center relative z-10">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-2">
             <span className="text-2xl">♿</span>
           </div>
